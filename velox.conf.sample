@@ -6,6 +6,11 @@ set window.border_color_active      0xff338833
 set window.border_color_inactive    0xff888888
 set window.border_width             2
 
+set status_bar.color_normal_bg      0xff1a1a1a
+set status_bar.color_normal_fg      0xff999999
+set status_bar.color_selected_bg    0xff338833
+set status_bar.color_selected_fg    0xffffffff
+
 set tap_to_click                    1
 
 set tag.1.name                      1

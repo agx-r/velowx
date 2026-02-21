@@ -318,10 +318,7 @@ static void
 start_clients(void)
 {
 	extern char **environ;
-	char path[PATH_MAX];
-	const char *dir;
 	pid_t pid;
-	int ret;
 
 	posix_spawnp(&pid, "status_bar", NULL, NULL, (char *[]){"status_bar", NULL}, environ);
 }

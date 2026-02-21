@@ -164,8 +164,104 @@ static const struct item_interface divider_interface = {
 /* Configuration parameters */
 static const int spacing = 12;
 static const char *const font_name = "Terminus:pixelsize=14";
-static const struct style normal = { .bg = 0xff1a1a1a, .fg = 0xff999999 };
-static const struct style selected = { .bg = 0xff338833, .fg = 0xffffffff };
+
+/* status_bar colors, same format as window border colors in config (set status_bar.* 0xRRGGBB) */
+static uint32_t color_normal_bg = 0xff1a1a1a;
+static uint32_t color_normal_fg = 0xff999999;
+static uint32_t color_selected_bg = 0xff338833;
+static uint32_t color_selected_fg = 0xffffffff;
+
+static struct style normal;
+static struct style selected;
+
+static bool
+config_set_unsigned_hex(uint32_t *value, const char *string)
+{
+	char *end;
+	uint32_t result;
+
+	result = strtoul(string, &end, 16);
+	if (*end != '\0')
+		return false;
+	*value = result;
+	return true;
+}
+
+static FILE *
+open_config(void)
+{
+	FILE *file;
+	char path[256];
+
+	snprintf(path, sizeof(path), "%s/.velox.conf", getenv("HOME"));
+	if ((file = fopen(path, "r")))
+		goto found;
+
+	strcpy(path, "/etc/velox.conf");
+	if ((file = fopen(path, "r")))
+		goto found;
+
+	return NULL;
+found:
+	return file;
+}
+
+static bool
+status_bar_config_set(char *identifier, char *value)
+{
+	if (strcmp(identifier, "color_normal_bg") == 0)
+		return config_set_unsigned_hex(&color_normal_bg, value);
+	if (strcmp(identifier, "color_normal_fg") == 0)
+		return config_set_unsigned_hex(&color_normal_fg, value);
+	if (strcmp(identifier, "color_selected_bg") == 0)
+		return config_set_unsigned_hex(&color_selected_bg, value);
+	if (strcmp(identifier, "color_selected_fg") == 0)
+		return config_set_unsigned_hex(&color_selected_fg, value);
+	return false;
+}
+
+static bool
+config_parse(void)
+{
+	FILE *file;
+	char *line = NULL;
+	char *s, *identifier, *value;
+	size_t size;
+	ssize_t len;
+	static const char whitespace[] = " \t\n";
+	static const char prefix[] = "status_bar.";
+
+	if (!(file = open_config()))
+		return true; /* no config is ok, use defaults */
+
+	while ((len = getline(&line, &size, file)) != -1) {
+		if (line[len - 1] == '\n')
+			line[len - 1] = '\0';
+		s = line + strspn(line, whitespace);
+		if (*s == '#' || *s == '\0')
+			continue;
+		if (strncmp(s, "set ", 4) != 0)
+			continue;
+		s += 4;
+		s += strspn(s, whitespace);
+		identifier = s;
+		s += strcspn(s, whitespace);
+		if (*s == '\0')
+			continue;
+		*s++ = '\0';
+		if (strncmp(identifier, prefix, sizeof(prefix) - 1) != 0)
+			continue;
+		identifier += sizeof(prefix) - 1;
+		s += strspn(s, whitespace);
+		value = s;
+		s += strcspn(s, whitespace);
+		*s = '\0';
+		status_bar_config_set(identifier, value);
+	}
+	free(line);
+	fclose(file);
+	return true;
+}
 
 static timer_t timer;
 static bool running, need_draw;
@@ -410,6 +506,10 @@ setup(void)
 	struct item *item;
 
 	fprintf(stderr, "status bar: Initializing...");
+
+	config_parse();
+	normal = (struct style){ .bg = color_normal_bg, .fg = color_normal_fg };
+	selected = (struct style){ .bg = color_selected_bg, .fg = color_selected_fg };
 
 	wl_list_init(&screens);
 	wl_list_init(&tags);
