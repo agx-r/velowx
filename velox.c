@@ -34,11 +34,13 @@
 #include <limits.h>
 #include <signal.h>
 #include <spawn.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include <swc.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <wayland-server.h>
 #include <xkbcommon/xkbcommon.h>
 
@@ -321,13 +323,7 @@ start_clients(void)
 	pid_t pid;
 	int ret;
 
-	if (!(dir = getenv("VELOX_LIBEXEC")))
-		dir = VELOX_LIBEXEC;
-
-	ret = snprintf(path, sizeof(path), "%s/status_bar", dir);
-	if (ret < 0 || ret >= sizeof(path))
-		return;
-	posix_spawn(&pid, path, NULL, NULL, (char *[]){path, NULL}, environ);
+	posix_spawnp(&pid, "status_bar", NULL, NULL, (char *[]){"status_bar", NULL}, environ);
 }
 
 static int
@@ -362,6 +358,12 @@ main(int argc, char *argv[])
 	const char *socket;
 	int index;
 	char tag_name[] = "1";
+
+	{
+		char xdg_runtime_dir[64];
+		snprintf(xdg_runtime_dir, sizeof(xdg_runtime_dir), "/run/user/%u", (unsigned)getuid());
+		setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
+	}
 
 	velox.display = wl_display_create();
 	if (!velox.display)

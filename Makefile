@@ -47,8 +47,7 @@ VELOX_PACKAGE_LIBS     ?= $(call pkgconfig,$(VELOX_PACKAGES),libs,LIBS)
 CLEAN_FILES += $(VELOX_OBJECTS)
 
 FINAL_CFLAGS = $(CFLAGS) -std=c99
-FINAL_CPPFLAGS = $(CPPFLAGS) -D_XOPEN_SOURCE=700 \
-                 -DVELOX_LIBEXEC='"$(LIBEXECDIR)/velox"'
+FINAL_CPPFLAGS = $(CPPFLAGS) -D_XOPEN_SOURCE=700
 
 # Warning/error flags
 FINAL_CFLAGS += -Werror=implicit-function-declaration -Werror=implicit-int \
