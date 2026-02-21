@@ -161,11 +161,9 @@ static const struct item_interface divider_interface = {
 	.draw = &divider_draw
 };
 
-/* Configuration parameters */
 static const int spacing = 12;
 static const char *const font_name = "Terminus:pixelsize=14";
 
-/* status_bar colors, same format as window border colors in config (set status_bar.* 0xRRGGBB) */
 static uint32_t color_normal_bg = 0xff1a1a1a;
 static uint32_t color_normal_fg = 0xff999999;
 static uint32_t color_selected_bg = 0xff338833;

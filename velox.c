@@ -354,7 +354,7 @@ main(int argc, char *argv[])
 {
 	const char *socket;
 	int index;
-	char tag_name[] = "1";
+	char tag_name[] = "0";
 
 	{
 		char xdg_runtime_dir[64];

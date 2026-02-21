@@ -27,7 +27,7 @@
 
 #include <wayland-util.h>
 
-#define NUM_TAGS 9
+#define NUM_TAGS 4
 
 struct window;
 

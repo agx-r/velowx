@@ -13,6 +13,7 @@ set status_bar.color_selected_fg    0xffffffff
 
 set tap_to_click                    1
 
+set tag.0.name                      0
 set tag.1.name                      1
 set tag.2.name                      2
 set tag.3.name                      3
@@ -21,7 +22,6 @@ set tag.5.name                      5
 set tag.6.name                      6
 set tag.7.name                      7
 set tag.8.name                      8
-set tag.9.name                      9
 
 #      name             type    arguments
 action spawn_terminal   spawn   exec st
@@ -50,6 +50,7 @@ key Return      mod,shift           spawn_terminal
 key r           mod                 spawn_run
 key b           mod                 spawn_browser
 
+key 0           mod                 tag.0.activate
 key 1           mod                 tag.1.activate
 key 2           mod                 tag.2.activate
 key 3           mod                 tag.3.activate
@@ -58,8 +59,8 @@ key 5           mod                 tag.5.activate
 key 6           mod                 tag.6.activate
 key 7           mod                 tag.7.activate
 key 8           mod                 tag.8.activate
-key 9           mod                 tag.9.activate
 
+key 0           mod,ctrl            tag.0.toggle
 key 1           mod,ctrl            tag.1.toggle
 key 2           mod,ctrl            tag.2.toggle
 key 3           mod,ctrl            tag.3.toggle
@@ -68,8 +69,8 @@ key 5           mod,ctrl            tag.5.toggle
 key 6           mod,ctrl            tag.6.toggle
 key 7           mod,ctrl            tag.7.toggle
 key 8           mod,ctrl            tag.8.toggle
-key 9           mod,ctrl            tag.9.toggle
 
+key 0           mod,shift           tag.0.apply
 key 1           mod,shift           tag.1.apply
 key 2           mod,shift           tag.2.apply
 key 3           mod,shift           tag.3.apply
@@ -78,7 +79,6 @@ key 5           mod,shift           tag.5.apply
 key 6           mod,shift           tag.6.apply
 key 7           mod,shift           tag.7.apply
 key 8           mod,shift           tag.8.apply
-key 9           mod,shift           tag.9.apply
 
 button  left    mod                 window.begin_move:window.end_move
 button  left    mod,shift           window.begin_resize:window.end_resize

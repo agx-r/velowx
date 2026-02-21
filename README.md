@@ -25,8 +25,8 @@ searched for first in `${HOME}/.velox.conf` and then `/etc/velox.conf`.
 
 Internally, the configuration structure is organized as a tree. For example, the
 identifier `window.border_width` refers to the property controlling the border
-width of the windows, and the identifier `tag.3.toggle` refers to the action
-that toggles visibility of the third tag.
+width of the windows, and the identifier `tag.2.toggle` refers to the action
+that toggles visibility of the third tag (index 2).
 
 The format is fairly simple. Each line consists of a command, followed by
 command-specific arguments. The currently available commands are `set`,
@@ -39,7 +39,7 @@ The `set` command is used to set the value of a property. It takes as its first
 argument the identifier of the property to set, and as its second argument the
 new value. The interpretation of the strings provided as values is dependent
 upon the property being set. For example, `window.border_color_active`
-interprets its value as a hexadecimal color, while `tag.1.name` simply sets the
+interprets its value as a hexadecimal color, while `tag.0.name` simply sets the
 name of the tag to the given string.
 
 ### The `action` command
@@ -99,7 +99,7 @@ execute when the newly created window matches the rule. This action is invoked
 with the new window as an argument. An example to always spawn a window with
 title `st` on tag 2, is:
 
-    rule title st tag.2.apply
+    rule title st tag.1.apply
 
 See velox.conf.sample for an example of a basic configuration file.
 
