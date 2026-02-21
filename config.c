@@ -121,6 +121,7 @@ handle_set(char *s)
 {
 	struct config_node *node;
 	char *identifier, *value;
+	static const char status_bar_prefix[] = "status_bar.";
 
 	identifier = s;
 	s += strcspn(s, whitespace);
@@ -129,6 +130,9 @@ handle_set(char *s)
 		return false;
 
 	*s++ = '\0';
+
+	if (strncmp(identifier, status_bar_prefix, sizeof(status_bar_prefix) - 1) == 0)
+		return true;
 
 	if (!(node = lookup(identifier)) || node->type != CONFIG_NODE_TYPE_PROPERTY) {
 		fprintf(stderr, "Unknown identifier '%s'\n", identifier);
