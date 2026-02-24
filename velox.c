@@ -25,10 +25,10 @@
 #include "velox.h"
 #include "config.h"
 #include "layout.h"
+#include "protocol/velox-server-protocol.h"
 #include "screen.h"
 #include "tag.h"
 #include "window.h"
-#include "protocol/velox-server-protocol.h"
 
 #include <libinput.h>
 #include <limits.h>
@@ -74,8 +74,7 @@ new_window(struct swc_window *swc)
 static void
 new_device(struct libinput_device *device)
 {
-	libinput_device_config_tap_set_enabled(device, tap_to_click ?
-		LIBINPUT_CONFIG_TAP_ENABLED : LIBINPUT_CONFIG_TAP_DISABLED);
+	libinput_device_config_tap_set_enabled(device, tap_to_click ? LIBINPUT_CONFIG_TAP_ENABLED : LIBINPUT_CONFIG_TAP_DISABLED);
 }
 
 const struct swc_manager manager = {
@@ -319,8 +318,22 @@ start_clients(void)
 {
 	extern char **environ;
 	pid_t pid;
+	const char *home;
+	char bg_path[PATH_MAX];
 
-	posix_spawnp(&pid, "status_bar", NULL, NULL, (char *[]){"status_bar", NULL}, environ);
+	posix_spawnp(&pid, "status_bar", NULL, NULL, (char *[]){ "status_bar", NULL }, environ);
+
+	if ((home = getenv("HOME"))) {
+		snprintf(bg_path, sizeof(bg_path), "%s/.bg.png", home);
+		if (access(bg_path, F_OK) == 0) {
+			posix_spawn(&pid, "/bin/swcbg", NULL, NULL, (char *[]){ "swcbg", "--image", bg_path, NULL }, environ);
+			return;
+		}
+	}
+
+	if (access("/etc/bg.png", F_OK) == 0) {
+		posix_spawn(&pid, "/bin/swcbg", NULL, NULL, (char *[]){ "swcbg", "--image", "/etc/bg.png", NULL }, environ);
+	}
 }
 
 static int
